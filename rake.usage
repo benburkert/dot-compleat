@@ -1,0 +1,9 @@
+rake
+  ( -T
+  | <targets> );
+
+targets = !
+  if [ -f Rakefile ]
+  then
+    $COMP_LINE -T | grep 'rake ' | awk '{ print $2 }'
+  fi ;
