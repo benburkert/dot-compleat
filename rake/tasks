@@ -1,0 +1,37 @@
+#! /usr/bin/env ruby
+
+require 'fileutils'
+require 'digest/md5'
+
+def tasks(line = ENV['COMP_LINE'])
+  bin, *tokens = line.split(' ')
+  word = tokens.last.nil? ? '' : (tokens.last.include?('-') ? '' : tokens.last)
+
+  `#{bin} -T | grep rake | awk '{ print $2 }'`.split("\n").select {|t| t =~ /^#{word}/ }
+end
+
+def cached_tasks(cachefile)
+  File.read(cachefile).split("\n")
+end
+
+def cache_and_print(tasks, cachefile)
+  File.open(cachefile, 'w') do |f|
+    tasks.each do |t|
+      f.puts t
+      $stdout.puts t
+    end
+  end
+end
+
+cache_dir = File.expand_path(File.join(File.dirname(__FILE__), '.cache'))
+FileUtils.mkdir(cache_dir) unless File.directory?(cache_dir)
+
+rakefile = File.expand_path('Rakefile')
+digest = Digest::MD5.hexdigest(rakefile)
+cachefile = File.join(cache_dir, digest)
+
+if File.exists?(cachefile) && File.mtime(cachefile) >= File.mtime(rakefile)
+  cached_tasks(cachefile).each {|t| $stdout.puts t }
+else
+  cache_and_print tasks, cachefile
+end
