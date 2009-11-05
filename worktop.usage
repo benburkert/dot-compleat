@@ -1,0 +1,4 @@
+worktop
+  ( <projects> );
+
+projects = ! ls $WORKTOP_DIR ;
