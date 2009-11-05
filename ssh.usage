@@ -1,0 +1,7 @@
+ssh
+  ( <config_hosts>
+  | <known_hosts> );
+
+config_hosts = ! cat $HOME/.ssh/config | egrep '^Host \w+' | awk '{ print $2 }' ;
+known_hosts = ! cat $HOME/.ssh/known_hosts | awk '{ if ($1 ~ /(^.+),/) { gsub(/,.*$/, "", $1)
+                    print $1 } }';
