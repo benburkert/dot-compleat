@@ -4,10 +4,10 @@ require 'fileutils'
 require 'digest/md5'
 
 def tasks(line = ENV['COMP_LINE'])
-  bin, *tokens = line.split(' ')
+  cmd, *tokens = line.split(' ')
   word = tokens.last.nil? ? '' : (tokens.last.include?('-') ? '' : tokens.last)
 
-  `#{bin} -T | grep rake | awk '{ print $2 }'`.split("\n").select {|t| t =~ /^#{word}/ }
+  `#{cmd} -T 2>/dev/null | grep rake | awk '{ print $2 }'`.split("\n").select {|t| t =~ /^#{word}/ }
 end
 
 def cached_tasks(cachefile)
