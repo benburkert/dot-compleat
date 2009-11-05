@@ -1,0 +1,5 @@
+screen
+  ( -x <sessions> );
+
+sessions = ! screen -ls | awk '{ if($1 ~ /\./) { gsub(/^.+\./, "", $1) 
+                print $1 } }'
